@@ -68,12 +68,12 @@ async function getAllExersiseLinks() {
 // To trim newlines and adjust heading levels
 function formatMarkdown(markdown) {
     return markdown
-        // Remove extra newlines
-        .replace(/\n{3,}/g, '\n')
         // Convert #### to ##
         .replace(/^#### /gm, '## ')
         // Remove trailing whitespace
-        .replace(/[ \t]+\n/g, '')
+        .replace(/[ \t]+\n/g, '\n')
+        // Remove extra newlines
+        .replace(/\n{3,}/g, '\n')
         // Remove empty lines at start/end
         .trim();
 }
@@ -118,6 +118,19 @@ async function getExercisePage(url) {
             codeBlockStyle: 'fenced',
             keepDefaultPadding: false,
             padding: 0
+        });
+
+        // rule for code because pre tags not handled by turndown by default
+        converter.addRule('codeBlocks', {
+            filter: ['pre', 'code'],
+            replacement: function(content) {
+                content = content.trim();
+                
+                // multiline if newline or > 50 chars
+                return content.includes('\n') || content.length > 50
+                    ? '\n```\n' + content + '\n```\n'
+                    : '`' + content + '`';
+            }
         });
 
         content = converter.turndown(content);
