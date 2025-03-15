@@ -1,0 +1,16 @@
+{
+  "name": "moodlescrapper",
+  "version": "1.0.0",
+  "description": "Scraping moodle page",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Faith",
+  "license": "ISC",
+  "dependencies": {
+    "jsdom": "^26.0.0",
+    "node-fetch": "^3.3.2"
+  }
+}
