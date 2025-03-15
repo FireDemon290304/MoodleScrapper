@@ -65,6 +65,19 @@ async function getAllExersiseLinks() {
         });
 }
 
+// To trim newlines and adjust heading levels
+function formatMarkdown(markdown) {
+    return markdown
+        // Remove extra newlines
+        .replace(/\n{3,}/g, '\n')
+        // Convert #### to ##
+        .replace(/^#### /gm, '## ')
+        // Remove trailing whitespace
+        .replace(/[ \t]+\n/g, '')
+        // Remove empty lines at start/end
+        .trim();
+}
+
 async function getExercisePage(url) {
     return fetch(url, { method: 'GET', headers: basicHeaders })
     .then(response => {
@@ -102,10 +115,13 @@ async function getExercisePage(url) {
             headingStyle: 'atx',
             hr: '---',
             bulletstyle: '-',
-            codeBlockStyle: 'fenced'
+            codeBlockStyle: 'fenced',
+            keepDefaultPadding: false,
+            padding: 0
         });
 
         content = converter.turndown(content);
+        content = formatMarkdown(content);
 
         return {
             content,
@@ -121,7 +137,7 @@ async function downloadImage(imageUrl, localPath) {
 
     const arrayBuffer = await response.arrayBuffer();
     const fileStream = await writeFile(localPath, Buffer.from(arrayBuffer));
-    console.log(`Downloaded image: ${path.basename(imageUrl)}`);
+    console.log(`\tDownloaded image: ${path.basename(imageUrl)}`);
     return fileStream;
 }
 
