@@ -119,7 +119,8 @@ async function downloadImage(imageUrl, localPath) {
     const response = await fetch(imageUrl, { method: 'GET', headers: basicHeaders });
     if (!response.ok) throw new ImageDownloadError(`HTTP error! status: ${response.status}`, imageUrl);
 
-    const fileStream = await writeFile(localPath, await response.arrayBuffer());
+    const arrayBuffer = await response.arrayBuffer();
+    const fileStream = await writeFile(localPath, Buffer.from(arrayBuffer));
     console.log(`Downloaded image: ${path.basename(imageUrl)}`);
     return fileStream;
 }
