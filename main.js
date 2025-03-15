@@ -24,6 +24,7 @@ const basicHeaders = {
 };
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const log = (message) => console.log(`[${new Date().toISOString()}] ${message}`);
 
 class MoodleFetchError extends Error {
     constructor(message, statusCode) {
@@ -172,7 +173,9 @@ async function downloadImages(imageUrls, localPaths) {
 
 async function main() {
     try {
-        console.log('Starting exercise download...');
+        log('Starting exercise download...');
+
+        //console.log('Starting exercise download...');
 
         const exercises = await getAllExersiseLinks();
         console.log(`Found ${exercises.length} exercises`);
