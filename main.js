@@ -2,6 +2,8 @@ import fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
 import { mkdir, writeFile } from 'fs/promises';
 import * as path from 'path';
+import createDOMPurify from 'dompurify';
+import TurndownService from 'turndown';
 
 // main configs
 const config = {
@@ -15,7 +17,7 @@ const config = {
 };
 
 // Session config
-const sessionId = "e7q5ums5upf47afqlkiingid56";
+const sessionId = "efg188uq7vqquv34gmm2v4od2g";
 const basicHeaders = {
     'Cookie': `${config.sessionCookieName}=${sessionId}`,
     'User-Agent': config.userAgent
@@ -91,8 +93,19 @@ async function getExercisePage(url) {
         // Replace image URLs in `content` with local paths (e.g. "images/abc.png" in the returned object)
         let content = mainContent.innerHTML;
         for (const [originalUrl, localPath] of imageMap) {
-            content = content.replace(originalUrl, localPath);
+            content = content.replace(originalUrl, `![Image](${localPath})`);
         }
+
+        const dompurify = createDOMPurify(dom.window);
+        content = dompurify.sanitize(content);
+        const converter = new TurndownService({
+            headingStyle: 'atx',
+            hr: '---',
+            bulletstyle: '-',
+            codeBlockStyle: 'fenced'
+        });
+
+        content = converter.turndown(content);
 
         return {
             content,

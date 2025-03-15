@@ -7,14 +7,16 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:FireDemon290304/MoodleScrapper.git"
-    },
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Faith",
   "license": "ISC",
   "dependencies": {
+    "dompurify": "^3.2.4",
     "jsdom": "^26.0.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "turndown": "^7.2.0"
   }
 }
