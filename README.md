@@ -47,14 +47,14 @@ const config = {
 const sessionId = "your_moodle_session_id";
 ```
 
-Make sure to replace `your_moodle_session_id` with your actual Moodle session ID in the [main.js](http://_vscodecontentref_/5) file.
+Make sure to replace `your_moodle_session_id` with your actual Moodle session ID in the [`main.js`](main.js) file.
 
 ## Usage
 
 Run the application:
 
 ```bash
-node [main.js](http://_vscodecontentref_/0)
+node main.js
 ```
 
 The application will log the progress of downloading `exercises` and `images`. The downloaded content will be saved in the exercises and images directories.
@@ -63,10 +63,10 @@ The application will log the progress of downloading `exercises` and `images`. T
 
 ```md
 .gitignore
-[main.js](http://_vscodecontentref_/1)
-[package.json](http://_vscodecontentref_/2)
-[README.md](http://_vscodecontentref_/3)
-[todo.md](http://_vscodecontentref_/4)
+main.js
+package.json
+README.md
+todo.md
 exercises/
 images/
 ```
