@@ -118,7 +118,8 @@ async function getExercisePage(url) {
         // Replace image URLs in `content` with local paths (e.g. "images/abc.png" in the returned object)
         let content = mainContent.innerHTML;
         for (const [originalUrl, localPath] of imageMap) {
-            content = content.replace(originalUrl, `![Image](${localPath})`);
+            const markdownPath = `\n../${localPath.replace(/\\/g, '/')}\n`; // Ensure forward slashes
+            content = content.replace(originalUrl, markdownPath);
         }
 
         const dompurify = createDOMPurify(dom.window);
