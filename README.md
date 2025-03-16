@@ -62,11 +62,11 @@ The application will log the progress of downloading `exercises` and `images`. T
 ## Project Structure
 
 ```md
-.gitignore(.gitignore)
-main.js(main.js)
-package.json(package.json)
-README.md(README.md)
-todo.md(todo.md)
+.gitignore
+main.js
+package.json
+README.md
+todo.md
 exercises/
 images/
 ```
