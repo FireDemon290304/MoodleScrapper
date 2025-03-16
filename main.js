@@ -17,7 +17,7 @@ const config = {
 };
 
 // Session config
-const sessionId = "efg188uq7vqquv34gmm2v4od2g";
+const sessionId = "ac68jed3bvamsq00l9beem9k3s";
 const basicHeaders = {
     'Cookie': `${config.sessionCookieName}=${sessionId}`,
     'User-Agent': config.userAgent
@@ -56,14 +56,25 @@ async function getAllExersiseLinks() {
                 document.querySelectorAll('[data-activityname="Exercises"] a'))
                 .map(link => ({
                     url: link.href,
-                    text: link.textContent.trim(),
-                    id: link.closest('.activity-wrapper').dataset.id
+                    //text: link.textContent.trim(),        // usually empty
+                    id: link.closest('.activity-wrapper').dataset.id,
+                    lectureName: link?.closest('.course-section')?.querySelector('.sectionname')?.textContent.trim()
                 }))
-                .filter((item, index, self) =>      // remove duplicates
+                //there are two links to the exercise, one on the text and one on the icon
+                .filter((item, index, self) =>      // remove duplicate
                     index === self.findIndex(t => t.url === item.url));
 
             return exerciseData;
         });
+}
+
+// Debugging helper function
+function debugExerciseLink(link) {
+    console.log('Debugging exercise link:');
+    console.log('1. Chained:', link.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('.sectionname').textContent.trim());
+    //console.log('2. closest:', link?.closest('[data-for="section_title"]')?.querySelector('.sectionname')?.textContent.trim());
+    console.log('2. closest:', link?.closest('[data-id="677587"]')?.querySelector('.sectionname')?.textContent.trim());
+    console.log('3. other', );
 }
 
 // To trim newlines and adjust heading levels
@@ -175,25 +186,30 @@ async function main() {
     try {
         log('Starting exercise download...');
 
-        //console.log('Starting exercise download...');
-
         const exercises = await getAllExersiseLinks();
         console.log(`Found ${exercises.length} exercises`);
         
         for (const exercise of exercises) {
-            console.log(`Processing exercise: ${exercise.text}`);
+            console.log(`Processing exercise: ${exercise.lectureName}`);
             
             const pageData = await getExercisePage(exercise.url);
+
+            // Decode URLs in pageData
+            pageData.imageUrls = pageData.imageUrls.map(url => decodeURIComponent(url));
+            pageData.imageLocalPaths = pageData.imageLocalPaths.map(path => decodeURIComponent(path));
+
             if (!(await downloadImages(pageData.imageUrls, pageData.imageLocalPaths))) {
-                console.warn(`Some images failed to download for ${exercise.text}`);
+                console.warn(`Some images failed to download for ${exercise.lectureName}`);
             }
+
+            // maybe use lecture name instead of id (first 9 chars)
             const mdPath = path.join(config.downloadDirectories.exercises, `${exercise.id}.md`);
             await mkdir(path.dirname(mdPath), { recursive: true });
 
-            const mdContent = `# ${exercise.text}\n\n${pageData.content}`;
+            const mdContent = `# ${exercise.lectureName}\n\n${pageData.content}`;
             await writeFile(mdPath, mdContent, 'utf-8');
             
-            console.log(`Saved exercise content: ${exercise.text}`);
+            console.log(`Saved exercise content: ${exercise.lectureName}\n\n`);
         }
         console.log('All exercises downloaded successfully');
     } catch (error) {
